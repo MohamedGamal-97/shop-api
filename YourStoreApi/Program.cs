@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using YourStoreApi;
+using StackExchange.Redis;
 using YourStoreApi.Context;
 using YourStoreApi.Errors;
 using YourStoreApi.Middleware;
@@ -25,6 +26,8 @@ builder.Services.AddDbContext<StoreContext>(x => x.UseSqlServer(builder.Configur
 builder.Services.AddDbContext<AppIdentityContext>(x => x.UseSqlServer(builder.Configuration.GetConnectionString("Identitycon")));
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped(typeof(IGenericRepository<>), (typeof(GenericRepository<>)));
+builder.Services.AddScoped<IBasketRepository, BasketRepository>();
+
 builder.Services.AddAutoMapper(typeof(MappingProfiles));
 
 builder.Services.Configure<ApiBehaviorOptions>(options =>
@@ -51,6 +54,12 @@ builder.Services.AddCors(opt =>
     {
         policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:4200");
     });
+});
+
+
+builder.Services.AddSingleton<IConnectionMultiplexer>(c => {
+    var configuration = ConfigurationOptions.Parse(builder.Configuration.GetConnectionString("Redis"), true);
+    return ConnectionMultiplexer.Connect(configuration);
 });
 
 var app = builder.Build();
