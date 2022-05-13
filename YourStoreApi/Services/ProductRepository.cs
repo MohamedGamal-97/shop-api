@@ -37,5 +37,11 @@ namespace YourStoreApi.Services
         {
             return await _context.ProductTypes.ToListAsync();
         }
+
+        public void AddProduct(Product product)
+        {
+            _context.Products.Add(product);
+            _context.SaveChanges();
+        }
     }
 }

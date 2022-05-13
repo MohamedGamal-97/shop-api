@@ -13,6 +13,7 @@ using YourStoreApi.Models;
 using YourStoreApi.Models.Dto;
 using YourStoreApi.Services;
 using YourStoreApi.Services.Helpers;
+using System.Text.Json;
 
 namespace YourStoreApi.Controllers
 {
@@ -23,8 +24,10 @@ namespace YourStoreApi.Controllers
         private readonly IGenericRepository<ProductBrand> _productBrandsRepo;
         private readonly IGenericRepository<ProductType> _productTypesRepo;
         private readonly IMapper _mapper;
+        private readonly IProductRepository _productRepository;
 
         public ProductsController(IGenericRepository<Product> productsRepo,
+            IProductRepository ProductRepo,
         IGenericRepository<ProductBrand> productBrandsRepo, 
         IGenericRepository<ProductType> productTypesRepo,
         IMapper mapper)
@@ -33,7 +36,7 @@ namespace YourStoreApi.Controllers
             _productBrandsRepo = productBrandsRepo;
             _productsRepo = productsRepo;
             _mapper = mapper;
-
+            _productRepository = ProductRepo;
         }
 
         // GET: api/Products
@@ -82,7 +85,29 @@ namespace YourStoreApi.Controllers
         {
             return Ok(await _productTypesRepo.ListAllAsync());
         }
+        [HttpGet("samna")]
+        public async Task<ActionResult<IReadOnlyList<ProductType>>> getsamna()
+        {
+            return Ok();
+        }
 
+
+        [HttpPost("PostProduct")]
+        public async void PostProduct(object obj)
+
+        {
+
+            var posted_product = obj.ToString();
+            var Recieved_product =(JsonSerializer.Deserialize<Product>(posted_product));   
+            Product product=new Product() { Description= Recieved_product.Description,
+                Name= Recieved_product.Name
+            , PictureUrl=Recieved_product.PictureUrl, Price=Recieved_product.Price, 
+                ProductBrandId= Recieved_product.ProductBrandId, 
+                ProductTypeId=Recieved_product.ProductTypeId};
+            _productRepository.AddProduct(product);
+
+
+        }
         /*
         // PUT: api/Products/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
