@@ -85,18 +85,13 @@ namespace YourStoreApi.Controllers
         {
             return Ok(await _productTypesRepo.ListAllAsync());
         }
-        [HttpGet("samna")]
-        public async Task<ActionResult<IReadOnlyList<ProductType>>> getsamna()
-        {
-            return Ok();
-        }
+
 
 
         [HttpPost("PostProduct")]
         public async void PostProduct(object obj)
 
         {
-
             var posted_product = obj.ToString();
             var Recieved_product =(JsonSerializer.Deserialize<Product>(posted_product));   
             Product product=new Product() { Description= Recieved_product.Description,
@@ -105,8 +100,6 @@ namespace YourStoreApi.Controllers
                 ProductBrandId= Recieved_product.ProductBrandId, 
                 ProductTypeId=Recieved_product.ProductTypeId};
             _productRepository.AddProduct(product);
-
-
         }
         /*
         // PUT: api/Products/5

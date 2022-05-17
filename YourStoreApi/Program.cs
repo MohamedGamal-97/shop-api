@@ -10,12 +10,16 @@ using YourStoreApi.Middleware;
 using YourStoreApi.Models;
 using YourStoreApi.Services;
 using YourStoreApi.Services.Helpers;
+using ServiceStack.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
-
 // Add services to the container.
+
+
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -27,6 +31,8 @@ builder.Services.AddDbContext<AppIdentityContext>(x => x.UseSqlServer(builder.Co
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped(typeof(IGenericRepository<>), (typeof(GenericRepository<>)));
 builder.Services.AddScoped<IBasketRepository, BasketRepository>();
+builder.Services.AddScoped<ITokenService, TokenService>();
+
 
 builder.Services.AddAutoMapper(typeof(MappingProfiles));
 
@@ -48,6 +54,7 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
     };
 });
 
+
 builder.Services.AddCors(opt =>
 {
     opt.AddPolicy("CorsPolicy", policy =>
@@ -62,7 +69,23 @@ builder.Services.AddSingleton<IConnectionMultiplexer>(c => {
     return ConnectionMultiplexer.Connect(configuration);
 });
 
+
+
+builder.Services.AddIdentityCore<AppUser>().AddEntityFrameworkStores<AppIdentityContext>().AddSignInManager<SignInManager<AppUser>>(); ;
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Token:Key"])),
+                        ValidIssuer = builder.Configuration["Token:Issuer"],
+                        ValidateIssuer = true,
+                        ValidateAudience = false
+                    };
+                });
 var app = builder.Build();
+IConfiguration configuration = app.Configuration;
 
 
 // Configure the HTTP request pipeline.
@@ -81,6 +104,7 @@ app.UseHttpsRedirection();
 
 app.UseCors("CorsPolicy");
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
