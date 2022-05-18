@@ -1,5 +1,9 @@
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using YourStoreApi;
+using StackExchange.Redis;
 using YourStoreApi.Context;
 using YourStoreApi.Errors;
 using YourStoreApi.Middleware;
@@ -10,28 +14,38 @@ using System.Net;
 using System.Net.Mail;
 using System.Net.Mime;
 using StackExchange.Redis;
+using ServiceStack.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
-
 // Add services to the container.
 
-// builder.Services.AddControllers();
+
+
+builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<StoreContext>(x => x.UseSqlServer(builder.Configuration.GetConnectionString("con")));
-builder.Services.AddSingleton<IConnectionMultiplexer>(c=>{
-    var configration=ConfigurationOptions.Parse(builder.Configuration.GetConnectionString("Redis"),true);
-    return ConnectionMultiplexer.Connect(configration);
-});
+// builder.Services.AddSingleton<IConnectionMultiplexer>(c=>{
+//     var configration=ConfigurationOptions.Parse(builder.Configuration.GetConnectionString("Redis"),true);
+//     return ConnectionMultiplexer.Connect(configration);
+// });
 // builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped(typeof(IGenericRepository<>), (typeof(GenericRepository<>)));
 builder.Services.AddScoped<IFavouriteRepository, FavouriteRepository>();
+builder.Services.AddDbContext<AppIdentityContext>(x => x.UseSqlServer(builder.Configuration.GetConnectionString("Identitycon")));
+// builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IBasketRepository, BasketRepository>();
+builder.Services.AddScoped<ITokenService, TokenService>();
+
 
 builder.Services.AddAutoMapper(typeof(MappingProfiles));
+
 builder.Services.AddControllers().AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling =
 Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 builder.Services.Configure<ApiBehaviorOptions>(options =>
@@ -52,6 +66,7 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
     };
 });
 
+
 builder.Services.AddCors(opt =>
 {
     opt.AddPolicy("CorsPolicy", policy =>
@@ -60,7 +75,29 @@ builder.Services.AddCors(opt =>
     });
 });
 
+
+builder.Services.AddSingleton<IConnectionMultiplexer>(c => {
+    var configuration = ConfigurationOptions.Parse(builder.Configuration.GetConnectionString("Redis"), true);
+    return ConnectionMultiplexer.Connect(configuration);
+});
+
+
+
+builder.Services.AddIdentityCore<AppUser>().AddEntityFrameworkStores<AppIdentityContext>().AddSignInManager<SignInManager<AppUser>>(); ;
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuerSigningKey = true,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Token:Key"])),
+                        ValidIssuer = builder.Configuration["Token:Issuer"],
+                        ValidateIssuer = true,
+                        ValidateAudience = false
+                    };
+                });
 var app = builder.Build();
+IConfiguration configuration = app.Configuration;
 
 
 // Configure the HTTP request pipeline.
@@ -117,7 +154,13 @@ using var scope = app.Services.CreateScope();
         var context = services.GetRequiredService<StoreContext>();
         await context.Database.MigrateAsync();
         await StoreContextSeed.SeedAsync(context, loggerFactory);
-    }
+    
+
+    var userManager = services.GetRequiredService<UserManager<AppUser>>();
+    var IdentityContext = services.GetRequiredService<IdentityDbContext>();
+    await IdentityContext.Database.MigrateAsync();
+    await AppIdentityDbContextSeed.SeedUsersAsync(userManager);
+}
     catch (Exception ex)
     {
         var logger = loggerFactory.CreateLogger<Program>();

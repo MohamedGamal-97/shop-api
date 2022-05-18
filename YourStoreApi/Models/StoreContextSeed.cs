@@ -19,7 +19,16 @@ namespace YourStoreApi.Models
                     }
                     await context.SaveChangesAsync();
                 }
-
+    //    if (!context.ProductTypes.Any())
+    //             {
+    //                 var typesData = File.ReadAllText("./Models/SeedData/types.json");
+    //                 var types = JsonSerializer.Deserialize<List<ProductType>>(typesData);
+    //                 foreach (var item in types)
+    //                 {
+    //                     context.ProductTypes.Add(item);
+    //                 }
+    //                 await context.SaveChangesAsync();
+    //             }
                 if (!context.Categories.Any())
                 {
                     var CategoriesData = File.ReadAllText("./Models/SeedData/category.json");

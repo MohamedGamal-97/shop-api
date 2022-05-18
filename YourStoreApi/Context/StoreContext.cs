@@ -17,6 +17,8 @@ namespace YourStoreApi.Context
         public DbSet<Colour> Colors { get; set; }
         public DbSet<Size> Sizes { get; set; }
         public DbSet<ProductFeature> ProductFeatures { get; set; }
+        // public DbSet<ProductType> ProductTypes { get; set; }
+
         public DbSet<ProductImages> ProductImages { get; set; }
         public DbSet<Review> Reviews { get; set; }
         public DbSet<Customer> Customers { get; set; }

@@ -16,6 +16,7 @@ namespace YourStoreApi.Models.Dto
         public int RateCount { get; set; } = 0;
         public int Quantity { get; set; } = 1;
         public string Color { get; set; }
+        //  public string ProductType { get; set; }
         public string Size { get; set; }
         public int Sale { get; set; } = 0;
         public string SubCategory { get; set; }

@@ -1,51 +1,44 @@
 [
     {
-      "Name": "XS"
+      "Name": "0.0"
     },
     {
-      "Name": "XS"
+      "Name": "1"
     },
     {
-      "Name": "M"
+      "Name": "2.4"
     },
     {
-      "Name": "L"
+      "Name": "10"
     },
     {
-      "Name": "XL"
+      "Name": "32"
     },
     {
-      "Name": "XXL"
+      "Name": "39"
     },
   
     {
-      "Name": "XXXL"
+      "Name": "40"
     },
     {
-      "Name": "XXXL"
+      "Name": "49"
     },
     {
-      "Name": "28W x 30L"
+      "Name": "50"
     }
     ,
     {
-      "Name": "28W x 30L"
+      "Name": "65"
     }
     ,
     {
-      "Name": "29W x 32L"
+      "Name": "75"
     }
     ,
     {
-      "Name": "30W x 30L"
+      "Name": "85"
     }
-    ,
-    {
-      "Name": "31W x 31L"
-    }
-    ,
-    {
-      "Name": "32W x 32L"
-    }
+  
   ]
   

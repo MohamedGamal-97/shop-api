@@ -14,6 +14,7 @@ using YourStoreApi.Models;
 using YourStoreApi.Models.Dto;
 using YourStoreApi.Services;
 using YourStoreApi.Services.Helpers;
+using System.Text.Json;
 
 namespace YourStoreApi.Controllers
 {
@@ -30,6 +31,7 @@ namespace YourStoreApi.Controllers
         private readonly IGenericRepository<SubCategory> _SubCategoriesRepo;
 
         private readonly IMapper _mapper;
+        // private readonly IProductRepository _productRepository;
 
         public ProductsController(IGenericRepository<Product> productsRepo,
         IGenericRepository<ProductBrand> productBrandsRepo,
@@ -38,6 +40,7 @@ namespace YourStoreApi.Controllers
         IGenericRepository<SubCategory> SubCategoriesRepo,
         IGenericRepository<Category> CategoriesRepo,
          IGenericRepository<Review> ReviewsRepo,
+        //  IProductRepository ProductRepo,
         IMapper mapper)
         {
             _productBrandsRepo = productBrandsRepo;
@@ -48,6 +51,7 @@ namespace YourStoreApi.Controllers
             _SubCategoriesRepo = SubCategoriesRepo;
             _CategoriesRepo = CategoriesRepo;
             _ReviewsRepo = ReviewsRepo;
+            // _productRepository = ProductRepo;
         }
 
         // GET: api/Products
@@ -116,7 +120,21 @@ namespace YourStoreApi.Controllers
             var caategories = await _CategoriesRepo.ListAllAsync();
             var subCategories = await _SubCategoriesRepo.ListAllAsync();
             return Ok(_mapper.Map<IReadOnlyList<SubCategoryToReturnDto>>(subCategories));
+
         }
+        // [HttpPost("PostProduct")]
+        // public async void PostProduct(object obj)
+
+        // {
+        //     var posted_product = obj.ToString();
+        //     var Recieved_product =(JsonSerializer.Deserialize<Product>(posted_product));   
+        //     Product product=new Product() { Description= Recieved_product.Description,
+        //         Name= Recieved_product.Name
+        //     , PictureUrl=Recieved_product.PictureUrl, Price=Recieved_product.Price, 
+        //         ProductBrandId= Recieved_product.ProductBrandId, 
+        //         ProductTypeId=Recieved_product.ProductTypeId};
+        //     _productRepository.AddProduct(product);
+        // }
         /*
         // PUT: api/Products/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

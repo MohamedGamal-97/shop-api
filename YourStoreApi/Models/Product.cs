@@ -11,6 +11,9 @@ namespace YourStoreApi.Models
         public ICollection<ProductImages> ProductImages { get; set; } = new List<ProductImages>();
         public int Quantity { get; set; } = 1;
 
+        // public string? PictureUrl { get; set; }
+        // public ProductType ProductType { get; set; }
+        // public int ProductTypeId { get; set; }
         public ProductBrand ProductBrand { get; set; }
         public int ProductBrandId { get; set; }
         public DateTime Date { get; set; }
