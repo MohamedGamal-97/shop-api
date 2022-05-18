@@ -1,5 +1,6 @@
 ﻿using System.Text.Json;
 using YourStoreApi.Context;
+using YourStoreApi.Models.OderAggregate;
 
 namespace YourStoreApi.Models
 {
@@ -38,6 +39,17 @@ namespace YourStoreApi.Models
                     foreach (var item in products)
                     {
                         context.Products.Add(item);
+                    }
+                    await context.SaveChangesAsync();
+                }
+
+                if (!context.DeliveryMethods.Any())
+                {
+                    var dmData = File.ReadAllText("./Models/SeedData/delivery.json");
+                    var methods = JsonSerializer.Deserialize<List<DeliveryMethod>>(dmData);
+                    foreach (var item in methods)
+                    {
+                        context.DeliveryMethods.Add(item);
                     }
                     await context.SaveChangesAsync();
                 }
