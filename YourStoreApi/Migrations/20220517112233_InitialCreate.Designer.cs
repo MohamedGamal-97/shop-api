@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using YourStoreApi.Context;
 
@@ -11,9 +12,10 @@ using YourStoreApi.Context;
 namespace YourStoreApi.Migrations
 {
     [DbContext(typeof(StoreContext))]
-    partial class StoreContextModelSnapshot : ModelSnapshot
+    [Migration("20220517112233_InitialCreate")]
+    partial class InitialCreate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -208,16 +210,10 @@ namespace YourStoreApi.Migrations
                     b.Property<int>("Customer_Id")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("Date")
-                        .HasColumnType("datetime2");
-
                     b.Property<int>("Product_Id")
                         .HasColumnType("int");
 
                     b.Property<string>("head")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("name")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("review")

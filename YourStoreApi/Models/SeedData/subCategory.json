@@ -1,0 +1,18 @@
+[
+    {
+      "Name": "Boards",
+      "Category_Id":1
+    },
+    {
+      "Name": "Hats",
+      "Category_Id":2
+    },
+    {
+      "Name": "Boots",
+      "Category_Id":2
+    },
+    {
+      "Name": "Gloves",
+      "Category_Id":3
+    }
+  ]
