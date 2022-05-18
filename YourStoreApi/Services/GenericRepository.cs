@@ -23,7 +23,10 @@ namespace YourStoreApi.Services
         {
             return await ApplySpecification(spec).FirstOrDefaultAsync();
         }
-
+ public void Add(T entity)
+        {
+            _context.Set<T>().Add(entity);
+        }
         public async Task<IReadOnlyList<T>> ListAsync(ISpecification<T> spec)
         {
             return await ApplySpecification(spec).ToListAsync();

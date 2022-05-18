@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using YourStoreApi.Context;
 using YourStoreApi.Errors;
@@ -45,6 +46,12 @@ namespace YourStoreApi.Controllers
         public ActionResult GetNotFoundRequest(int id)
         {
             return Ok();
+        }
+        [Authorize]
+        [HttpGet("testauth")]
+        public ActionResult<string> GetSecretText()
+        {
+            return "secret stuff";
         }
     }
 }

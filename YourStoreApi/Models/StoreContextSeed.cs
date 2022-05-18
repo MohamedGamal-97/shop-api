@@ -20,18 +20,66 @@ namespace YourStoreApi.Models
                     }
                     await context.SaveChangesAsync();
                 }
-
-                if (!context.ProductTypes.Any())
+    //    if (!context.ProductTypes.Any())
+    //             {
+    //                 var typesData = File.ReadAllText("./Models/SeedData/types.json");
+    //                 var types = JsonSerializer.Deserialize<List<ProductType>>(typesData);
+    //                 foreach (var item in types)
+    //                 {
+    //                     context.ProductTypes.Add(item);
+    //                 }
+    //                 await context.SaveChangesAsync();
+    //             }
+                if (!context.Categories.Any())
                 {
-                    var typesData = File.ReadAllText("./Models/SeedData/types.json");
-                    var types = JsonSerializer.Deserialize<List<ProductType>>(typesData);
-                    foreach (var item in types)
+                    var CategoriesData = File.ReadAllText("./Models/SeedData/category.json");
+                    var categories = JsonSerializer.Deserialize<List<Category>>(CategoriesData);
+
+                    foreach (var item in categories)
                     {
-                        context.ProductTypes.Add(item);
+                        context.Categories.Add(item);
                     }
+
                     await context.SaveChangesAsync();
                 }
+                if (!context.SubCategories.Any())
+                {
+                    var subCategoriessData = File.ReadAllText("./Models/SeedData/subCategory.json");
+                    var subCategories = JsonSerializer.Deserialize<List<SubCategory>>(subCategoriessData);
 
+                    foreach (var item in subCategories)
+                    {
+                        context.SubCategories.Add(item);
+                    }
+
+                    await context.SaveChangesAsync();
+                }
+                if (!context.Colors.Any())
+                {
+                    var ColorsData = File.ReadAllText("./Models/SeedData/Color.json");
+                    var Colors = JsonSerializer.Deserialize<List<Colour>>(ColorsData);
+
+                    foreach (var item in Colors)
+                    {
+                        context.Colors.Add(item);
+                    }
+
+                    await context.SaveChangesAsync();
+                }
+                if (!context.Sizes.Any())
+                {
+                    var SizesData = File.ReadAllText("./Models/SeedData/Size.json");
+                    var Sizes = JsonSerializer.Deserialize<List<Size>>(SizesData);
+
+                    foreach (var item in Sizes)
+                    {
+                        context.Sizes.Add(item);
+                    }
+
+                    await context.SaveChangesAsync();
+                }
+               
+           
                 if (!context.Products.Any())
                 {
                     var productsData = File.ReadAllText("./Models/SeedData/products.json");
@@ -42,15 +90,29 @@ namespace YourStoreApi.Models
                     }
                     await context.SaveChangesAsync();
                 }
-
-                if (!context.DeliveryMethods.Any())
+               
+                 if (!context.ProductImages.Any())
                 {
-                    var dmData = File.ReadAllText("./Models/SeedData/delivery.json");
-                    var methods = JsonSerializer.Deserialize<List<DeliveryMethod>>(dmData);
-                    foreach (var item in methods)
+                    var productImagesData = File.ReadAllText("./Models/SeedData/productImage.json");
+                    var ProductImages = JsonSerializer.Deserialize<List<ProductImages>>(productImagesData);
+
+                    foreach (var item in ProductImages)
                     {
-                        context.DeliveryMethods.Add(item);
+                        context.ProductImages.Add(item);
                     }
+
+                    await context.SaveChangesAsync();
+                }
+                      if (!context.ProductFeatures.Any())
+                {
+                    var ProductFeaturesData = File.ReadAllText("./Models/SeedData/prodeuctFeature.json");
+                    var ProductFeatures = JsonSerializer.Deserialize<List<ProductFeature>>(ProductFeaturesData);
+
+                    foreach (var item in ProductFeatures)
+                    {
+                        context.ProductFeatures.Add(item);
+                    }
+
                     await context.SaveChangesAsync();
                 }
             }

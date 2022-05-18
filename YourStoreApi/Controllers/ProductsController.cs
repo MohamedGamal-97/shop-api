@@ -1,6 +1,7 @@
 ﻿#nullable disable
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
@@ -13,40 +14,56 @@ using YourStoreApi.Models;
 using YourStoreApi.Models.Dto;
 using YourStoreApi.Services;
 using YourStoreApi.Services.Helpers;
+using System.Text.Json;
 
 namespace YourStoreApi.Controllers
 {
-    
+
     public class ProductsController : BaseApiController
     {
         private readonly IGenericRepository<Product> _productsRepo;
         private readonly IGenericRepository<ProductBrand> _productBrandsRepo;
-        private readonly IGenericRepository<ProductType> _productTypesRepo;
+
+        private readonly IGenericRepository<Colour> _ColoesRepo;
+        private readonly IGenericRepository<Size> _SizesRepo;
+        private readonly IGenericRepository<Category> _CategoriesRepo;
+        private readonly IGenericRepository<Review> _ReviewsRepo;
+        private readonly IGenericRepository<SubCategory> _SubCategoriesRepo;
+
         private readonly IMapper _mapper;
+        // private readonly IProductRepository _productRepository;
 
         public ProductsController(IGenericRepository<Product> productsRepo,
-        IGenericRepository<ProductBrand> productBrandsRepo, 
-        IGenericRepository<ProductType> productTypesRepo,
+        IGenericRepository<ProductBrand> productBrandsRepo,
+        IGenericRepository<Colour> ColoesRepo,
+        IGenericRepository<Size> SizesRepo,
+        IGenericRepository<SubCategory> SubCategoriesRepo,
+        IGenericRepository<Category> CategoriesRepo,
+         IGenericRepository<Review> ReviewsRepo,
+        //  IProductRepository ProductRepo,
         IMapper mapper)
         {
-            _productTypesRepo = productTypesRepo;
             _productBrandsRepo = productBrandsRepo;
             _productsRepo = productsRepo;
             _mapper = mapper;
-
+            _ColoesRepo = ColoesRepo;
+            _SizesRepo = SizesRepo;
+            _SubCategoriesRepo = SubCategoriesRepo;
+            _CategoriesRepo = CategoriesRepo;
+            _ReviewsRepo = ReviewsRepo;
+            // _productRepository = ProductRepo;
         }
 
         // GET: api/Products
         [HttpGet]
         public async Task<ActionResult<Pagination<ProductToReturnDto>>> GetProducts(
-            [FromQuery]ProductSpecParams productParams)
+            [FromQuery] ProductSpecParams productParams)
         {
             var spec = new ProductsWithTypesAndBrandsSpecification(productParams);
             var countSpec = new ProductWithFilterForCountSpecification(productParams);
             var totalItems = await _productsRepo.CountAsync(countSpec);
             var products = await _productsRepo.ListAsync(spec);
-
-            //return Ok(products);
+            await _CategoriesRepo.ListAllAsync();
             var data = _mapper.Map<IReadOnlyList<Product>, IReadOnlyList<ProductToReturnDto>>(products);
             return Ok(new Pagination<ProductToReturnDto>(productParams.PageIndex,
             productParams.PageSize, totalItems, data));
@@ -62,12 +79,12 @@ namespace YourStoreApi.Controllers
         {
             var spec = new ProductsWithTypesAndBrandsSpecification(id);
             var product = await _productsRepo.GetEntityWithSpec(spec);
-
+            await _CategoriesRepo.ListAllAsync();
+            await _ReviewsRepo.ListAllAsync();
             if (product == null)
             {
                 return NotFound(new ApiResponse(404));
             }
-
             //return product;
             return _mapper.Map<Product, ProductToReturnDto>(product);
 
@@ -77,12 +94,47 @@ namespace YourStoreApi.Controllers
         {
             return Ok(await _productBrandsRepo.ListAllAsync());
         }
-        [HttpGet("types")]
-        public async Task<ActionResult<IReadOnlyList<ProductType>>> GetProductTypes()
-        {
-            return Ok(await _productTypesRepo.ListAllAsync());
-        }
 
+        [HttpGet("Categories")]
+        public async Task<ActionResult<IReadOnlyCollection<Category>>> GetCategories()
+        {
+            var subCategories = await _SubCategoriesRepo.ListAllAsync();
+            var caategories = await _CategoriesRepo.ListAllAsync();
+            return Ok(_mapper.Map<IReadOnlyList<CategoryToReturnDto>>(caategories));
+        }
+        [HttpGet("Colors")]
+        public async Task<ActionResult<IReadOnlyCollection<Category>>> GetColors()
+        {
+
+            return Ok(await _ColoesRepo.ListAllAsync());
+        }
+        [HttpGet("Sizes")]
+        public async Task<ActionResult<IReadOnlyCollection<Category>>> GetSizes()
+        {
+
+            return Ok(await _SizesRepo.ListAllAsync());
+        }
+        [HttpGet("SubCategories")]
+        public async Task<ActionResult<IReadOnlyCollection<SubCategory>>> GetSubCategories()
+        {
+            var caategories = await _CategoriesRepo.ListAllAsync();
+            var subCategories = await _SubCategoriesRepo.ListAllAsync();
+            return Ok(_mapper.Map<IReadOnlyList<SubCategoryToReturnDto>>(subCategories));
+
+        }
+        // [HttpPost("PostProduct")]
+        // public async void PostProduct(object obj)
+
+        // {
+        //     var posted_product = obj.ToString();
+        //     var Recieved_product =(JsonSerializer.Deserialize<Product>(posted_product));   
+        //     Product product=new Product() { Description= Recieved_product.Description,
+        //         Name= Recieved_product.Name
+        //     , PictureUrl=Recieved_product.PictureUrl, Price=Recieved_product.Price, 
+        //         ProductBrandId= Recieved_product.ProductBrandId, 
+        //         ProductTypeId=Recieved_product.ProductTypeId};
+        //     _productRepository.AddProduct(product);
+        // }
         /*
         // PUT: api/Products/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

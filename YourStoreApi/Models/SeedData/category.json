@@ -1,0 +1,17 @@
+[
+    {
+      "Name": "Men",
+      "PictureUrl": "images/products/watch.jpg"
+    
+    },
+    {
+      "Name": "Women",
+      "PictureUrl": "images/products/watch.jpg"
+      
+    },
+    {
+      "Name": "Kids",
+      "PictureUrl": "images/products/watch.jpg"
+    }
+  
+  ]
