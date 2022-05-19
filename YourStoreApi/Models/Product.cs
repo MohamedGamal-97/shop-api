@@ -8,7 +8,7 @@ namespace YourStoreApi.Models
         public string Name { get; set; }
         public string Description { get; set; }
         public decimal Price { get; set; }
-        public ICollection<ProductImages> ProductImages { get; set; } = new List<ProductImages>();
+        public List<ProductImages> ProductImages { get; set; } = new List<ProductImages>();
         public int Quantity { get; set; } = 1;
 
         // public string? PictureUrl { get; set; }

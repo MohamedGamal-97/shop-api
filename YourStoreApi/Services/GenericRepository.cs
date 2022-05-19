@@ -45,10 +45,10 @@ namespace YourStoreApi.Services
 
        
 
-        public void Add(T entity)
-        {
-            _context.Set<T>().Add(entity);
-        }
+        //public void Add(T entity)
+        //{
+        //    _context.Set<T>().Add(entity);
+        //}
 
       
 

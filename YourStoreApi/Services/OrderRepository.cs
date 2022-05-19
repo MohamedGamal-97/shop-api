@@ -17,7 +17,7 @@ namespace YourStoreApi.Services
         }
 
         
-        public async Task<Order> CreateOrderAsync(string buyerEmail, int deliveryMethodId, string basketId, Address shippingAdress)
+        public async Task<Order> CreateOrderAsync(string buyerEmail, int deliveryMethodId, string basketId,  YourStoreApi.Models.OderAggregate.Address shippingAdress)
         {
             // get basket from repoooooooooooooo
             var basket = await BasketRepo.GetBasketAsync(basketId);
@@ -27,7 +27,8 @@ namespace YourStoreApi.Services
             foreach(var item in items)
             {
                 var ProductItem = await unitOfWork.Repository<Product>().GetByIdAsync(item.Id);
-                var itemOrded = new ProductItemOrdered(ProductItem.Id, ProductItem.Name , ProductItem.PictureUrl);
+                 
+                var itemOrded = new ProductItemOrdered(ProductItem.Id, ProductItem.Name , ProductItem.ProductImages[0].PictureUrl);
                 var orderItem = new OrderItem(itemOrded, ProductItem.Price, item.Quantity);
                 items.Add(orderItem);
 
@@ -39,12 +40,11 @@ namespace YourStoreApi.Services
             unitOfWork.Repository<Order>().Add(order);
             var result = await unitOfWork.Complete();
             if (result <= 0) return null;
-
             await BasketRepo.DeleteBasketAsync(basketId);
             return order;
         }
 
-
+       
 
         public async Task<IReadOnlyList<DeliveryMethod>> GetDeliveryMethodAsync()
         {

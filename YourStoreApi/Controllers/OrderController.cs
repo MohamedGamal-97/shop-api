@@ -24,7 +24,7 @@ namespace YourStoreApi.Controllers
         public async Task<ActionResult<Order>> CreateOrder(OrderDto orderDto)
         {
             var email = HttpContext.User?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
-            var address = mapper.Map<AddressDto, Address>(orderDto.ShipToAddress);
+            var address = mapper.Map<AddressDto, YourStoreApi.Models.OderAggregate.Address>(orderDto.ShipToAddress);
 
             var order = await orderRepository.CreateOrderAsync(email, orderDto.DeliveryMethodId, orderDto.BasketId, address);
 
