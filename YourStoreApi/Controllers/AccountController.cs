@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using System.Text.Json;
 using YourStoreApi.Errors;
 using YourStoreApi.Models.Dto;
 using YourStoreApi.Services;
@@ -35,8 +36,9 @@ namespace YourStoreApi.Controllers
             [HttpGet]
             public async Task<ActionResult<UserDto>> GetCurrentUser()
             {
-            var user = await _userManager.FindByIdAsync(_userManager.GetUserId(User));
+            
             var email=User.FindFirstValue(ClaimTypes.Email);
+            var user = await _userManager.FindByEmailAsync(email);
 
                 return new UserDto
                 {
@@ -78,9 +80,11 @@ namespace YourStoreApi.Controllers
 
 
             [HttpPost("login")]
-            public async Task<ActionResult<UserDto>> Login(LoginDto loginDto)
+            public async Task<ActionResult<UserDto>> Login(object obj)
             {
-                var user = await _userManager.FindByEmailAsync(loginDto.Email);
+            var login = obj.ToString();
+            var loginDto = (JsonSerializer.Deserialize<LoginDto>(login));
+            var user = await _userManager.FindByEmailAsync(loginDto.Email);
 
                 if (user == null) return Unauthorized(new ApiResponse(401));
 
