@@ -10,6 +10,10 @@ using YourStoreApi.Middleware;
 using YourStoreApi.Models;
 using YourStoreApi.Services;
 using YourStoreApi.Services.Helpers;
+using System.Net;  
+using System.Net.Mail;
+using System.Net.Mime;
+using StackExchange.Redis;
 using ServiceStack.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -28,15 +32,24 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<StoreContext>(x => x.UseSqlServer(builder.Configuration.GetConnectionString("con")));
-builder.Services.AddDbContext<AppIdentityContext>(x => x.UseSqlServer(builder.Configuration.GetConnectionString("Identitycon")));
-builder.Services.AddScoped<IProductRepository, ProductRepository>();
+// builder.Services.AddSingleton<IConnectionMultiplexer>(c=>{
+//     var configration=ConfigurationOptions.Parse(builder.Configuration.GetConnectionString("Redis"),true);
+//     return ConnectionMultiplexer.Connect(configration);
+// });
+// builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped(typeof(IGenericRepository<>), (typeof(GenericRepository<>)));
+builder.Services.AddScoped<IFavouriteRepository, FavouriteRepository>();
+builder.Services.AddDbContext<AppIdentityContext>(x => x.UseSqlServer(builder.Configuration.GetConnectionString("Identitycon")));
+// builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IBasketRepository, BasketRepository>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 
 
+builder.Services.AddScoped(typeof(IGenericRepository<>), (typeof(GenericRepository<>)));
 builder.Services.AddAutoMapper(typeof(MappingProfiles));
 
+builder.Services.AddControllers().AddNewtonsoftJson(x => x.SerializerSettings.ReferenceLoopHandling =
+Newtonsoft.Json.ReferenceLoopHandling.Ignore);
 builder.Services.Configure<ApiBehaviorOptions>(options =>
 {
     options.InvalidModelStateResponseFactory = actionContext =>
@@ -64,9 +77,9 @@ builder.Services.AddCors(opt =>
     });
 });
 
-
-builder.Services.AddSingleton<IConnectionMultiplexer>(c => {
-    var configuration = ConfigurationOptions.Parse(builder.Configuration.GetConnectionString("Redis"), true);
+builder.Services.AddSingleton<IConnectionMultiplexer>(c =>
+{
+    var configuration = ConfigurationOptions.Parse(builder.Configuration.GetConnectionString("Redis"), false);
     return ConnectionMultiplexer.Connect(configuration);
 });
 
@@ -123,13 +136,34 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+//MailAddress to = new MailAddress("bido777adel@gmail.com");  
+//MailAddress from = new MailAddress("bido777adel@gmail.com");  
+
+//MailMessage message = new MailMessage(from, to);  
+//message.Subject = "Good morning, Elizabeth";  
+//message.Body = "Elizabeth, Long time no talk. Would you be up for lunch in Soho on Monday? I'm paying.;";  
+
+//SmtpClient client = new SmtpClient("smtp.server.address", 2525)  
+//{  
+//    Credentials = new NetworkCredential("smtp_username", "smtp_password"),  
+//    EnableSsl = true  
+//};  
+//// code in brackets above needed if authentication required   
+
+//try  
+//{    
+//  client.Send(message);  
+//}  
+//catch (SmtpException ex)  
+//{  
+//  Console.WriteLine(ex.ToString());  
+//}  
 app.UseStatusCodePagesWithReExecute("/errors/{0}");
 
 app.UseHttpsRedirection();
 
 app.UseCors("CorsPolicy");
 
-app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
