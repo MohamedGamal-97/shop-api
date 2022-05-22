@@ -25,6 +25,8 @@ namespace YourStoreApi.Services.Helpers
             CreateMap<SubCategory, SubCategoryToReturnDto>()
             .ForMember(d => d.Category, o => o.MapFrom(s => s.Category.Name));
 
+            CreateMap<Address, AddressDto>().ReverseMap();
+
         }
     }
 }

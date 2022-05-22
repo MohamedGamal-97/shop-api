@@ -23,7 +23,7 @@ namespace YourStoreApi.Controllers
     {
         private readonly IGenericRepository<Product> _productsRepo;
         private readonly IGenericRepository<ProductBrand> _productBrandsRepo;
-
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IGenericRepository<Colour> _ColoesRepo;
         private readonly IGenericRepository<Size> _SizesRepo;
         private readonly IGenericRepository<Category> _CategoriesRepo;
@@ -40,6 +40,7 @@ namespace YourStoreApi.Controllers
         IGenericRepository<SubCategory> SubCategoriesRepo,
         IGenericRepository<Category> CategoriesRepo,
          IGenericRepository<Review> ReviewsRepo,
+         IUnitOfWork unitOfWork,
         //  IProductRepository ProductRepo,
         IMapper mapper)
         {
@@ -51,6 +52,7 @@ namespace YourStoreApi.Controllers
             _SubCategoriesRepo = SubCategoriesRepo;
             _CategoriesRepo = CategoriesRepo;
             _ReviewsRepo = ReviewsRepo;
+            _unitOfWork = unitOfWork;
             // _productRepository = ProductRepo;
         }
 
@@ -121,6 +123,26 @@ namespace YourStoreApi.Controllers
             var subCategories = await _SubCategoriesRepo.ListAllAsync();
             return Ok(_mapper.Map<IReadOnlyList<SubCategoryToReturnDto>>(subCategories));
 
+        }
+    
+        [HttpPost]
+        public async Task<Product> CreateProduct(Product product)
+
+        {
+             _unitOfWork.Repository<Product>().Add(product);
+            var res=await _unitOfWork.Complete();
+            if(res<=0)return null;
+            return product;
+        }
+        [HttpDelete]
+        public async Task<Product> DeleteProduct(int id)
+
+        {
+          var product= await _unitOfWork.Repository<Product>().GetByIdAsync(id);
+             _unitOfWork.Repository<Product>().Delete(product);
+            var res=await _unitOfWork.Complete();
+            if(res<=0)return null;
+            return product;
         }
         // [HttpPost("PostProduct")]
         // public async void PostProduct(object obj)
