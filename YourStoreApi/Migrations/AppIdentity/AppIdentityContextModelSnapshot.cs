@@ -8,7 +8,7 @@ using YourStoreApi.Context;
 
 #nullable disable
 
-namespace YourStoreApi.Identity.Migrations
+namespace YourStoreApi.Migrations.AppIdentity
 {
     [DbContext(typeof(AppIdentityContext))]
     partial class AppIdentityContextModelSnapshot : ModelSnapshot

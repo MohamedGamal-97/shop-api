@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace YourStoreApi.Identity.Migrations
+namespace YourStoreApi.Migrations.AppIdentity
 {
-    public partial class InitialIdentity : Migration
+    public partial class MyFirstMigration2 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

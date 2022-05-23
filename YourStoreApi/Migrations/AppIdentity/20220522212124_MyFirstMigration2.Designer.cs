@@ -9,11 +9,11 @@ using YourStoreApi.Context;
 
 #nullable disable
 
-namespace YourStoreApi.Identity.Migrations
+namespace YourStoreApi.Migrations.AppIdentity
 {
     [DbContext(typeof(AppIdentityContext))]
-    [Migration("20220520184659_InitialIdentity")]
-    partial class InitialIdentity
+    [Migration("20220522212124_MyFirstMigration2")]
+    partial class MyFirstMigration2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
