@@ -9,18 +9,21 @@ using YourStoreApi.Services;
 
 namespace YourStoreApi.Controllers
 {
-    [Authorize]
-   
-    public class OrderController :  Controller
+    [ApiController]
+    [Route("api/[controller]")]
+
+    public class OrdersController : ControllerBase
     {
+
         private readonly IOrderRepository orderRepository;
         private readonly IMapper mapper;
 
-        public  OrderController(IOrderRepository _orderRepository , IMapper _mapper)
+        public OrdersController(IOrderRepository _orderRepository, IMapper _mapper)
         {
             orderRepository = _orderRepository;
             mapper = _mapper;
         }
+        [HttpPost]
         public async Task<ActionResult<Order>> CreateOrder(OrderDto orderDto)
         {
             var email = HttpContext.User?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
@@ -32,6 +35,8 @@ namespace YourStoreApi.Controllers
 
             return Ok(order);
         }
+
+
         [HttpGet]
         public async Task<ActionResult<IReadOnlyList<OrderDto>>> GetOrdersForUser()
         {

@@ -17,7 +17,7 @@ namespace YourStoreApi.Services
         }
 
         
-        public async Task<Order> CreateOrderAsync(string buyerEmail, int deliveryMethodId, string basketId,  YourStoreApi.Models.OderAggregate.Address shippingAdress)
+        public async Task<Order> CreateOrderAsync(string buyerEmail, int deliveryMethodId, string basketId, YourStoreApi.Models.OderAggregate.Address shippingAdress)
         {
             // get basket from repoooooooooooooo
             var basket = await BasketRepo.GetBasketAsync(basketId);
@@ -37,7 +37,9 @@ namespace YourStoreApi.Services
             var deliveryMethod = await unitOfWork.Repository<DeliveryMethod>().GetByIdAsync(deliveryMethodId);
             var subTotal = items.Sum(item => item.Price * item.Quantity);
             var order = new Order(buyerEmail, shippingAdress, deliveryMethod, items, subTotal);
+           
             unitOfWork.Repository<Order>().Add(order);
+
             var result = await unitOfWork.Complete();
             if (result <= 0) return null;
             await BasketRepo.DeleteBasketAsync(basketId);

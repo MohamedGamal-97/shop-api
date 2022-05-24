@@ -23,7 +23,7 @@ namespace YourStoreApi.Services
         {
             return await ApplySpecification(spec).FirstOrDefaultAsync();
         }
- public void Add(T entity)
+        public void Add(T entity)
         {
             _context.Set<T>().Add(entity);
         }
