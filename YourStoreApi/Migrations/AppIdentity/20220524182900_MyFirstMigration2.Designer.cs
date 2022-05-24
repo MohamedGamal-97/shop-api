@@ -12,7 +12,7 @@ using YourStoreApi.Context;
 namespace YourStoreApi.Migrations.AppIdentity
 {
     [DbContext(typeof(AppIdentityContext))]
-    [Migration("20220522212124_MyFirstMigration2")]
+    [Migration("20220524182900_MyFirstMigration2")]
     partial class MyFirstMigration2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -159,11 +159,11 @@ namespace YourStoreApi.Migrations.AppIdentity
 
             modelBuilder.Entity("YourStoreApi.Address", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("AppUserId")
                         .IsRequired()
@@ -187,7 +187,7 @@ namespace YourStoreApi.Migrations.AppIdentity
                     b.Property<string>("street")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("ID");
+                    b.HasKey("Id");
 
                     b.HasIndex("AppUserId")
                         .IsUnique();

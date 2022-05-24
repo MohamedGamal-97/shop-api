@@ -157,11 +157,11 @@ namespace YourStoreApi.Migrations.AppIdentity
 
             modelBuilder.Entity("YourStoreApi.Address", b =>
                 {
-                    b.Property<int>("ID")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
                     b.Property<string>("AppUserId")
                         .IsRequired()
@@ -185,7 +185,7 @@ namespace YourStoreApi.Migrations.AppIdentity
                     b.Property<string>("street")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("ID");
+                    b.HasKey("Id");
 
                     b.HasIndex("AppUserId")
                         .IsUnique();

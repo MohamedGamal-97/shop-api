@@ -98,7 +98,7 @@ namespace YourStoreApi.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("DeliveryMethod");
+                    b.ToTable("DeliveryMethods");
                 });
 
             modelBuilder.Entity("YourStoreApi.Models.OderAggregate.Order", b =>
@@ -132,7 +132,7 @@ namespace YourStoreApi.Migrations
 
                     b.HasIndex("DeliveryMethodId");
 
-                    b.ToTable("Order");
+                    b.ToTable("Orders");
                 });
 
             modelBuilder.Entity("YourStoreApi.Models.OderAggregate.OrderItem", b =>
@@ -156,7 +156,7 @@ namespace YourStoreApi.Migrations
 
                     b.HasIndex("OrderId");
 
-                    b.ToTable("OrderItem");
+                    b.ToTable("OrderItems");
                 });
 
             modelBuilder.Entity("YourStoreApi.Models.Product", b =>
@@ -386,7 +386,7 @@ namespace YourStoreApi.Migrations
 
                             b1.HasKey("OrderId");
 
-                            b1.ToTable("Order");
+                            b1.ToTable("Orders");
 
                             b1.WithOwner()
                                 .HasForeignKey("OrderId");
@@ -420,7 +420,7 @@ namespace YourStoreApi.Migrations
 
                             b1.HasKey("OrderItemId");
 
-                            b1.ToTable("OrderItem");
+                            b1.ToTable("OrderItems");
 
                             b1.WithOwner()
                                 .HasForeignKey("OrderItemId");
