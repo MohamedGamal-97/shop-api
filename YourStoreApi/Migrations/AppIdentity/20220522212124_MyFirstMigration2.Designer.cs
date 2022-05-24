@@ -12,8 +12,8 @@ using YourStoreApi.Context;
 namespace YourStoreApi.Migrations.AppIdentity
 {
     [DbContext(typeof(AppIdentityContext))]
-    [Migration("20220517044731_IdentityMig")]
-    partial class IdentityMig
+    [Migration("20220522212124_MyFirstMigration2")]
+    partial class MyFirstMigration2
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -166,6 +166,7 @@ namespace YourStoreApi.Migrations.AppIdentity
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ID"), 1L, 1);
 
                     b.Property<string>("AppUserId")
+                        .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("City")
@@ -189,8 +190,7 @@ namespace YourStoreApi.Migrations.AppIdentity
                     b.HasKey("ID");
 
                     b.HasIndex("AppUserId")
-                        .IsUnique()
-                        .HasFilter("[AppUserId] IS NOT NULL");
+                        .IsUnique();
 
                     b.ToTable("Address");
                 });
@@ -205,6 +205,9 @@ namespace YourStoreApi.Migrations.AppIdentity
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DisplayName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
@@ -315,7 +318,9 @@ namespace YourStoreApi.Migrations.AppIdentity
                 {
                     b.HasOne("YourStoreApi.AppUser", "AppUser")
                         .WithOne("Address")
-                        .HasForeignKey("YourStoreApi.Address", "AppUserId");
+                        .HasForeignKey("YourStoreApi.Address", "AppUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("AppUser");
                 });

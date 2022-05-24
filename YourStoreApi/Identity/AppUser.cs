@@ -6,8 +6,8 @@ namespace YourStoreApi
 {
     public class AppUser : IdentityUser
     {
-        override
-        public string UserName { get; set; }
+        //override
+       public string DisplayName { get; set; }
         public Address Address { get; set; }
     }
 
