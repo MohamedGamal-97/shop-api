@@ -38,13 +38,17 @@ namespace YourStoreApi.Controllers
             {
             
             var email=User.FindFirstValue(ClaimTypes.Email);
+            var y = User.IsInRole("admin");
             var user = await _userManager.FindByEmailAsync(email);
+            var x = 5;
+            
 
                 return new UserDto
                 {
                     Email = user.Email,
                     Token = _tokenService.CreateToken(user),
-                    DisplayName = user.UserName
+                    DisplayName = user.UserName,
+                    
                 };
             }
 
