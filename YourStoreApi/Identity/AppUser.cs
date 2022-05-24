@@ -1,4 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using YourStoreApi;
+using YourStoreApi.Models.OderAggregate;
 
 namespace YourStoreApi
 {

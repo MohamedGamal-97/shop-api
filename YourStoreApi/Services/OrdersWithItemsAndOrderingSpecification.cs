@@ -9,7 +9,7 @@ namespace YourStoreApi.Services
         {
             AddInclude(o => o.OrderItems);
             AddInclude(o => o.DeliveryMethod);
-            AddOrderByDescending(o => o.OrderDate);
+            AddOrderByDescending(o => o.OrderDate); 
         }
 
         public OrdersWithItemsAndOrderingSpecification(int id, string email)

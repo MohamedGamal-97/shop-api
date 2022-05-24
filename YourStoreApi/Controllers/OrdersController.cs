@@ -9,9 +9,10 @@ using YourStoreApi.Services;
 
 namespace YourStoreApi.Controllers
 {
-    [Authorize]
+    [ApiController]
+    [Route("api/[controller]")]
 
-    public class OrdersController : BaseApiController
+    public class OrdersController : ControllerBase
     {
 
         private readonly IOrderRepository orderRepository;
@@ -27,7 +28,6 @@ namespace YourStoreApi.Controllers
         {
             var email = HttpContext.User?.Claims?.FirstOrDefault(x => x.Type == ClaimTypes.Email)?.Value;
             var address = mapper.Map<AddressDto, YourStoreApi.Models.OderAggregate.Address>(orderDto.ShipToAddress);
-            
             var order = await orderRepository.CreateOrderAsync(email, orderDto.DeliveryMethodId, orderDto.BasketId, address);
 
             if (order == null) return BadRequest(new ApiResponse(400, "Problem creating order"));

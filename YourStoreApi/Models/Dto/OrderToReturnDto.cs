@@ -8,7 +8,6 @@ namespace YourStoreApi.Models.Dto
         public string BuyerEmail { get; set; }
         public DateTimeOffset OrderDate { get; set; }
         public OderAggregate.Address ShipToAddress { get; set; }
-
         public string DeliveryMethod { get; set; }
         public decimal ShippingPrice { get; set; }
         public IReadOnlyList<OrderItemDto> OrderItems { get; set; }

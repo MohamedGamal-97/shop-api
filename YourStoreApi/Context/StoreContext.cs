@@ -20,6 +20,10 @@ namespace YourStoreApi.Context
         public DbSet<ProductFeature> ProductFeatures { get; set; }
         // public DbSet<ProductType> ProductTypes { get; set; }
 
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderItem> OrderItems { get; set; }
+        public DbSet<DeliveryMethod> DeliveryMethods { get; set; }
+
         public DbSet<ProductImages> ProductImages { get; set; }
         public DbSet<Review> Reviews { get; set; }
         public DbSet<Customer> Customers { get; set; }
