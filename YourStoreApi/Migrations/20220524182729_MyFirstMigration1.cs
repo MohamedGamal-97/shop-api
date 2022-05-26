@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace YourStoreApi.Migrations
 {
-    public partial class MyFirstMigration : Migration
+    public partial class MyFirstMigration1 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -51,7 +51,7 @@ namespace YourStoreApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "DeliveryMethod",
+                name: "DeliveryMethods",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -63,7 +63,7 @@ namespace YourStoreApi.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_DeliveryMethod", x => x.Id);
+                    table.PrimaryKey("PK_DeliveryMethods", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -113,7 +113,7 @@ namespace YourStoreApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Order",
+                name: "Orders",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -133,11 +133,11 @@ namespace YourStoreApi.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Order", x => x.Id);
+                    table.PrimaryKey("PK_Orders", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Order_DeliveryMethod_DeliveryMethodId",
+                        name: "FK_Orders_DeliveryMethods_DeliveryMethodId",
                         column: x => x.DeliveryMethodId,
-                        principalTable: "DeliveryMethod",
+                        principalTable: "DeliveryMethods",
                         principalColumn: "Id");
                 });
 
@@ -189,7 +189,7 @@ namespace YourStoreApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "OrderItem",
+                name: "OrderItems",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -203,11 +203,11 @@ namespace YourStoreApi.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_OrderItem", x => x.Id);
+                    table.PrimaryKey("PK_OrderItems", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_OrderItem_Order_OrderId",
+                        name: "FK_OrderItems_Orders_OrderId",
                         column: x => x.OrderId,
-                        principalTable: "Order",
+                        principalTable: "Orders",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -284,14 +284,14 @@ namespace YourStoreApi.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Order_DeliveryMethodId",
-                table: "Order",
-                column: "DeliveryMethodId");
+                name: "IX_OrderItems_OrderId",
+                table: "OrderItems",
+                column: "OrderId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_OrderItem_OrderId",
-                table: "OrderItem",
-                column: "OrderId");
+                name: "IX_Orders_DeliveryMethodId",
+                table: "Orders",
+                column: "DeliveryMethodId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProductFeatures_ProductId",
@@ -342,7 +342,7 @@ namespace YourStoreApi.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "OrderItem");
+                name: "OrderItems");
 
             migrationBuilder.DropTable(
                 name: "ProductFeatures");
@@ -354,7 +354,7 @@ namespace YourStoreApi.Migrations
                 name: "Reviews");
 
             migrationBuilder.DropTable(
-                name: "Order");
+                name: "Orders");
 
             migrationBuilder.DropTable(
                 name: "Customers");
@@ -363,7 +363,7 @@ namespace YourStoreApi.Migrations
                 name: "Products");
 
             migrationBuilder.DropTable(
-                name: "DeliveryMethod");
+                name: "DeliveryMethods");
 
             migrationBuilder.DropTable(
                 name: "Colors");
