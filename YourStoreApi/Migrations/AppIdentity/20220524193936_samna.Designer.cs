@@ -12,8 +12,8 @@ using YourStoreApi.Context;
 namespace YourStoreApi.Migrations.AppIdentity
 {
     [DbContext(typeof(AppIdentityContext))]
-    [Migration("20220522212124_MyFirstMigration2")]
-    partial class MyFirstMigration2
+    [Migration("20220524193936_samna")]
+    partial class samna
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -205,9 +205,6 @@ namespace YourStoreApi.Migrations.AppIdentity
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("DisplayName")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")

@@ -125,7 +125,7 @@ namespace YourStoreApi.Controllers
 
         }
     
-        [HttpPost]
+        [HttpPut]
         public async Task<Product> CreateProduct(Product product)
 
         {

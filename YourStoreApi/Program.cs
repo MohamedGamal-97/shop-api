@@ -13,7 +13,6 @@ using YourStoreApi.Services.Helpers;
 using System.Net;  
 using System.Net.Mail;
 using System.Net.Mime;
-using StackExchange.Redis;
 using ServiceStack.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -32,11 +31,12 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<StoreContext>(x => x.UseSqlServer(builder.Configuration.GetConnectionString("con")));
-// builder.Services.AddSingleton<IConnectionMultiplexer>(c=>{
-//     var configration=ConfigurationOptions.Parse(builder.Configuration.GetConnectionString("Redis"),true);
-//     return ConnectionMultiplexer.Connect(configration);
-// });
-// builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddSingleton<IConnectionMultiplexer>(c =>
+{
+    var configration = ConfigurationOptions.Parse(builder.Configuration.GetConnectionString("Redis"), true);
+    return ConnectionMultiplexer.Connect(configration);
+});
+
 builder.Services.AddScoped(typeof(IGenericRepository<>), (typeof(GenericRepository<>)));
 builder.Services.AddScoped<IFavouriteRepository, FavouriteRepository>();
 builder.Services.AddDbContext<AppIdentityContext>(x => x.UseSqlServer(builder.Configuration.GetConnectionString("Identitycon")));

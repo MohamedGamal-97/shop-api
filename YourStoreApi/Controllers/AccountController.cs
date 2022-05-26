@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using System.Text.Json;
+using YourStoreApi.Context;
 using YourStoreApi.Errors;
 using YourStoreApi.Models.Dto;
 using YourStoreApi.Services;
@@ -23,9 +24,9 @@ namespace YourStoreApi.Controllers
             private readonly SignInManager<AppUser> _signInManager;
             private readonly ITokenService _tokenService;
             private readonly IMapper _mapper;
-        protected ClaimsIdentity claimsIdentity { get; set; }
+        private AppIdentityContext _appidentitycontext;
         public AccountController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager,
-                ITokenService tokenService, IMapper mapper)
+                ITokenService tokenService, IMapper mapper, AppIdentityContext appidentitycontext)
             {
                 _mapper = mapper;
                 _tokenService = tokenService;
@@ -37,14 +38,15 @@ namespace YourStoreApi.Controllers
             [Authorize]
             public async Task<ActionResult<UserDto>> GetCurrentUser()
             {
-            var user = await _userManager.FindByIdAsync(_userManager.GetUserId(User));
             var email=User.FindFirstValue(ClaimTypes.Email);
+            var user = await _userManager.FindByEmailAsync(email);
 
                 return new UserDto
                 {
                     Email = user.Email,
                     Token = _tokenService.CreateToken(user),
-                    DisplayName = user.UserName
+                    UserName = user.UserName,
+                    Role=user.Role
                 };
             }
 
@@ -108,7 +110,6 @@ namespace YourStoreApi.Controllers
         {
             var user = await _userManager.FindByEmailFromClaimsPrinciple(User);
             user.Email=userDto.Email;
-            user.DisplayName=userDto.DisplayName;
             user.UserName=userDto.UserName;
             // user.Address = _mapper.Map<Address>(address);
 
@@ -139,7 +140,7 @@ namespace YourStoreApi.Controllers
                 Email = user.Email,
                 UserName=user.UserName,
                 Token = _tokenService.CreateToken(user),
-                DisplayName = user.DisplayName
+               // DisplayName = user.DisplayName
                 };
             }
 
@@ -153,9 +154,10 @@ namespace YourStoreApi.Controllers
 
                 var user = new AppUser
                 {
-                    DisplayName = registerDto.UserName,
+                    //DisplayName = registerDto.UserName,
                     Email = registerDto.Email,
                     UserName = registerDto.UserName,
+
                     
                 };
 
@@ -165,7 +167,7 @@ namespace YourStoreApi.Controllers
 
                 return new UserDto
                 {
-                    DisplayName = user.DisplayName,
+                    //DisplayName = user.DisplayName,
                     UserName=user.UserName,
                     Token = _tokenService.CreateToken(user),
                     Email = user.Email
