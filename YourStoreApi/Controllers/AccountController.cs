@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using API.Extensions;
+using AutoMapper;
 //using IdentityServer4.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -32,23 +33,18 @@ namespace YourStoreApi.Controllers
                 _userManager = userManager;
         }
 
-            [Authorize]
             [HttpGet]
+            [Authorize]
             public async Task<ActionResult<UserDto>> GetCurrentUser()
             {
-            
+            var user = await _userManager.FindByIdAsync(_userManager.GetUserId(User));
             var email=User.FindFirstValue(ClaimTypes.Email);
-            var y = User.IsInRole("admin");
-            var user = await _userManager.FindByEmailAsync(email);
-            var x = 5;
-            
 
                 return new UserDto
                 {
                     Email = user.Email,
                     Token = _tokenService.CreateToken(user),
-                    DisplayName = user.UserName,
-                    
+                    DisplayName = user.UserName
                 };
             }
 
@@ -58,30 +54,72 @@ namespace YourStoreApi.Controllers
                 return await _userManager.FindByEmailAsync(email) != null;
             }
 
-            [Authorize]
-            [HttpGet("address")]
-            public async Task<ActionResult<AddressDto>> GetUserAddress()
-            {
-                var user = await _userManager.FindByIdAsync(_userManager.GetUserId(User));
+            // [Authorize]
+            // [HttpGet("address")]
+            // public async Task<ActionResult<AddressDto>> GetUserAddress()
+            // {
+            // var email = User.FindFirstValue(ClaimTypes.Email);
+            // var user = await _userManager.FindByEmailAsync(email);
+
+            // return _mapper.Map<AddressDto>(user.Address);
+            // }
+
+            // [Authorize]
+            // [HttpPut("address")]
+            // public async Task<ActionResult<AddressDto>> UpdateUserAddress(AddressDto address)
+            // {
+                
+            //     var user = await _userManager.FindByIdAsync(_userManager.GetUserId(User));
+
+            // user.Address = _mapper.Map<Address>(address);
+
+            //     var result = await _userManager.UpdateAsync(user);
+
+            //     if (result.Succeeded) return Ok(_mapper.Map<AddressDto>(user.Address));
+
+            //     return BadRequest("Problem updating the user");
+            // }
+         [Authorize]
+        [HttpGet("address")]
+        public async Task<ActionResult<AddressDto>> GetUserAddress()
+        {
+            var user = await _userManager.FindByEmailWithAddressAsync(User);
 
             return _mapper.Map<AddressDto>(user.Address);
-            }
+        }
 
-            [Authorize]
-            [HttpPut("address")]
-            public async Task<ActionResult<AddressDto>> UpdateUserAddress(AddressDto address)
-            {
-                var user = await _userManager.FindByIdAsync(_userManager.GetUserId(User));
+        [Authorize]
+        [HttpPut("address")]
+        public async Task<ActionResult<AddressDto>> UpdateUserAddress(AddressDto address)
+        {
+            var user = await _userManager.FindByEmailWithAddressAsync(User);
 
             user.Address = _mapper.Map<Address>(address);
 
-                var result = await _userManager.UpdateAsync(user);
+            var result = await _userManager.UpdateAsync(user);
 
-                if (result.Succeeded) return Ok(_mapper.Map<AddressDto>(user.Address));
+            if (result.Succeeded) return Ok(_mapper.Map<AddressDto>(user.Address));
 
-                return BadRequest("Problem updating the user");
+            return BadRequest("Problem updating the user");
+        }
+        [Authorize]
+        [HttpPut]
+        public async Task<ActionResult<UserDto>> UpdateUser(UserDto userDto)
+        {
+            var user = await _userManager.FindByEmailFromClaimsPrinciple(User);
+            user.Email=userDto.Email;
+            user.DisplayName=userDto.DisplayName;
+            user.UserName=userDto.UserName;
+            // user.Address = _mapper.Map<Address>(address);
+
+            var result = await _userManager.UpdateAsync(user);
+
+            if (result.Succeeded) {
+                return userDto;
             }
-
+            
+            return BadRequest("Problem updating the user");
+        }
 
             [HttpPost("login")]
             public async Task<ActionResult<UserDto>> Login(object obj)
@@ -99,8 +137,9 @@ namespace YourStoreApi.Controllers
             return new UserDto
             {
                 Email = user.Email,
+                UserName=user.UserName,
                 Token = _tokenService.CreateToken(user),
-                DisplayName = user.UserName
+                DisplayName = user.DisplayName
                 };
             }
 
@@ -114,9 +153,9 @@ namespace YourStoreApi.Controllers
 
                 var user = new AppUser
                 {
-                    NormalizedUserName = registerDto.DisplayName,
+                    DisplayName = registerDto.UserName,
                     Email = registerDto.Email,
-                    UserName = registerDto.DisplayName,
+                    UserName = registerDto.UserName,
                     
                 };
 
@@ -126,7 +165,8 @@ namespace YourStoreApi.Controllers
 
                 return new UserDto
                 {
-                    DisplayName = user.UserName,
+                    DisplayName = user.DisplayName,
+                    UserName=user.UserName,
                     Token = _tokenService.CreateToken(user),
                     Email = user.Email
                 };

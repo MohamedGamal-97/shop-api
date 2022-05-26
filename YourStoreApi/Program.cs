@@ -43,7 +43,7 @@ builder.Services.AddDbContext<AppIdentityContext>(x => x.UseSqlServer(builder.Co
 // builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IBasketRepository, BasketRepository>();
 builder.Services.AddScoped<ITokenService, TokenService>();
-
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 builder.Services.AddScoped(typeof(IGenericRepository<>), (typeof(GenericRepository<>)));
 builder.Services.AddAutoMapper(typeof(MappingProfiles));
@@ -85,7 +85,11 @@ builder.Services.AddSingleton<IConnectionMultiplexer>(c =>
 
 
 
-builder.Services.AddIdentityCore<AppUser>().AddEntityFrameworkStores<AppIdentityContext>().AddSignInManager<SignInManager<AppUser>>(); ;
+var build=builder.Services.AddIdentityCore<AppUser>();
+build=new IdentityBuilder(build.UserType,build.Services);
+build.AddEntityFrameworkStores<AppIdentityContext>();
+build.AddSignInManager<SignInManager<AppUser>>(); 
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
                 {
@@ -163,7 +167,7 @@ app.UseStatusCodePagesWithReExecute("/errors/{0}");
 app.UseHttpsRedirection();
 
 app.UseCors("CorsPolicy");
-
+app.UseAuthentication();
 app.UseAuthorization();
 app.UseAuthentication();
 app.MapControllers();
@@ -183,7 +187,7 @@ using var scope = app.Services.CreateScope();
     
 
     var userManager = services.GetRequiredService<UserManager<AppUser>>();
-    var IdentityContext = services.GetRequiredService<IdentityDbContext>();
+    var IdentityContext = services.GetRequiredService<AppIdentityContext>();
     await IdentityContext.Database.MigrateAsync();
     await AppIdentityDbContextSeed.SeedUsersAsync(userManager);
 }

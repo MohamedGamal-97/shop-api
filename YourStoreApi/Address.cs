@@ -1,4 +1,6 @@
-﻿namespace YourStoreApi
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace YourStoreApi
 {
     public class Address
     {
@@ -9,6 +11,7 @@
         public string City { get; set; }
         public string State { get; set; }
         public string ZipCode { get; set; }
+       [Required]
         public string AppUserId { get; set; }
         public virtual AppUser AppUser { get; set; }
 

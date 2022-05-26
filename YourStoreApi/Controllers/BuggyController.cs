@@ -47,8 +47,8 @@ namespace YourStoreApi.Controllers
         {
             return Ok();
         }
-        [Authorize]
         [HttpGet("testauth")]
+        [Authorize]
         public ActionResult<string> GetSecretText()
         {
             return "secret stuff";

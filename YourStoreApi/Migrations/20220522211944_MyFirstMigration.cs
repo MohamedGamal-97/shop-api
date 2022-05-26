@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace YourStoreApi.Migrations
 {
-    public partial class InitialCreate : Migration
+    public partial class MyFirstMigration : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -48,6 +48,22 @@ namespace YourStoreApi.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Customers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "DeliveryMethod",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ShortName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DeliveryTime = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DeliveryMethod", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -97,6 +113,35 @@ namespace YourStoreApi.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Order",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    BuyerEmail = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    OrderDate = table.Column<DateTimeOffset>(type: "datetimeoffset", nullable: false),
+                    ShipToAddress_FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ShipToAddress_LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ShipToAddress_Street = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ShipToAddress_City = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ShipToAddress_State = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ShipToAddress_ZipCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DeliveryMethodId = table.Column<int>(type: "int", nullable: true),
+                    Subtotal = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PaymentIntentId = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Order", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Order_DeliveryMethod_DeliveryMethodId",
+                        column: x => x.DeliveryMethodId,
+                        principalTable: "DeliveryMethod",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Products",
                 columns: table => new
                 {
@@ -139,6 +184,30 @@ namespace YourStoreApi.Migrations
                         name: "FK_Products_SubCategories_SubCategory_Id",
                         column: x => x.SubCategory_Id,
                         principalTable: "SubCategories",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OrderItem",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ItemOrdered_ProductItemId = table.Column<int>(type: "int", nullable: true),
+                    ItemOrdered_ProductName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ItemOrdered_PictureUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    OrderId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OrderItem", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_OrderItem_Order_OrderId",
+                        column: x => x.OrderId,
+                        principalTable: "Order",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -193,7 +262,9 @@ namespace YourStoreApi.Migrations
                     Product_Id = table.Column<int>(type: "int", nullable: false),
                     star = table.Column<int>(type: "int", nullable: false),
                     review = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    head = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    head = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -211,6 +282,16 @@ namespace YourStoreApi.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Order_DeliveryMethodId",
+                table: "Order",
+                column: "DeliveryMethodId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderItem_OrderId",
+                table: "OrderItem",
+                column: "OrderId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProductFeatures_ProductId",
@@ -261,6 +342,9 @@ namespace YourStoreApi.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "OrderItem");
+
+            migrationBuilder.DropTable(
                 name: "ProductFeatures");
 
             migrationBuilder.DropTable(
@@ -270,10 +354,16 @@ namespace YourStoreApi.Migrations
                 name: "Reviews");
 
             migrationBuilder.DropTable(
+                name: "Order");
+
+            migrationBuilder.DropTable(
                 name: "Customers");
 
             migrationBuilder.DropTable(
                 name: "Products");
+
+            migrationBuilder.DropTable(
+                name: "DeliveryMethod");
 
             migrationBuilder.DropTable(
                 name: "Colors");
