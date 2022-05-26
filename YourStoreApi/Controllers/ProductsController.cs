@@ -126,10 +126,29 @@ namespace YourStoreApi.Controllers
         }
     
         [HttpPut]
-        public async Task<Product> CreateProduct(Product product)
+        public async Task<Product> CreateProduct(object obj)
 
         {
-             _unitOfWork.Repository<Product>().Add(product);
+
+            var serialized_product = obj.ToString();
+            Product p = new Product()
+            {
+                Description = serialized_product.Split(("description\": \""))[1].Split("\"")[0],
+                Color_Id = int.Parse(serialized_product.Split(("color_Id\": \""))[1].Split("\"")[0]),
+                AverageRating = 0,
+                Size_Id = int.Parse(serialized_product.Split(("size_Id\": \""))[1].Split("\"")[0]),
+                Name = serialized_product.Split(("name\": \""))[1].Split("\"")[0],
+                Sale = 0,
+                Price = int.Parse(serialized_product.Split(("color_Id\": \""))[1].Split("\"")[0]),
+                SubCategory_Id = int.Parse(serialized_product.Split(("subCategory_Id\": \""))[1].Split("\"")[0]),
+                ProductBrandId = int.Parse(serialized_product.Split(("productBrandId\": \""))[1].Split("\"")[0]),
+                CustomerBuy = 0,
+                RateCount = 0,
+                Quantity = int.Parse(serialized_product.Split(("quantity\": \""))[1].Split("\"")[0]),
+                Date = DateTime.UtcNow
+            };
+            var product = (JsonSerializer.Deserialize<Product>(serialized_product));
+            _unitOfWork.Repository<Product>().Add(product);
             var res=await _unitOfWork.Complete();
             if(res<=0)return null;
             return product;
